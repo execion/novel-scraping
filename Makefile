@@ -1,0 +1,2 @@
+run:
+	bash mysql.sh
