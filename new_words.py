@@ -1,5 +1,5 @@
 import pymysql.cursors
-from functions import filterCharacters, add_ignore_word
+from functions import filter_characters, add_ignore_word
 from database import database_word, database_novel
 
 word_database = pymysql.connect(
@@ -49,7 +49,7 @@ with connection:
             results = cursor.fetchall()
 
             for line in results:
-                line = filterCharacters(line["line"], set_words_clean)
+                line = filter_characters(line["line"], set_words_clean)
                 new_words.symmetric_difference_update(line)
             count += 10
             connection.commit()

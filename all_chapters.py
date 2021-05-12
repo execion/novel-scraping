@@ -1,5 +1,5 @@
 import subprocess
-from functionalities import getNovel, searchInFolder, createFolder, getChapters, getHtml
+from functions import getNovel, searchInFolder, createFolder, getChapters, getHtml
 
 async def main():
     link = input("Insert link: ")
