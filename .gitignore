@@ -2,6 +2,7 @@
 /scraping/__pycache__/
 /terminal/__pycache__/
 /database/__pycache__/
+/webnovel/
 /__pycache__/
 mysql.sh
 database.py
