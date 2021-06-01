@@ -28,6 +28,4 @@ connection = pymysql.connect(
 with connection:
     with connection.cursor() as cursor:
         send_titles_to_database(directories, cursor)  
-        send_text_to_database(all_files, cursor) 
-        connection.commit()
-                
+        send_text_to_database(all_files, cursor, connection) 

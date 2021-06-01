@@ -18,8 +18,8 @@ with word_database:
         list_words_unclean = []
         
         for table in listTypeWord:
-            sql = "SELECT word FROM {}".format(table)
-            cursor.execute(sql)
+            sql = "SELECT word FROM %s"
+            cursor.execute(sql, (table))
             words = cursor.fetchall()
             list_words_unclean.extend(words)
         

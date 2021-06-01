@@ -1,5 +1,6 @@
-from pymysql.connections import Cursor
+import re
 from itertools import product
+from pymysql.connections import Cursor
 
 def filter_characters(line: str, words: set):
     excludings = {'"', "'", "\\", '?', '¿', '!', '¡', '!', "$", '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ')', '(', '}', '%', '+', '-', ':', '.', ';', '[', ']', ',', '…', '’', '‘', '~', '–', '—'}
@@ -45,42 +46,12 @@ def send_titles_to_database(directories: list, cursor: Cursor) -> None:
             sql = "INSERT INTO novel(novel) VALUES(%s);"
             cursor.execute(sql, (directory["title"]))
 
-def filter_text(strings: list) -> list:
-    tempList = []
-    tempString = ""
-    letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","Y","X","Z"]
-    for string in strings:
-        isComplete = tempString.count('"') % 2 == 0 and tempString.count("]") % 2 != 0 and tempString.count("[") % 2 != 0
-        isHave = tempString.count('"') == 0 and tempString.count("]") == 0 and tempString.count("[") == 0
-        isEnding = isHave or isComplete
-        if string == "“" or string == "”":
-            string = '"'
-        if len(tempString) > 0:
-            if tempString[-1] == ".":
-                if string in letters:
-                    if isEnding:
-                        tempList.append(tempString)
-                        print(tempString)
-                        tempString = ""
-                if string == " " and isEnding:
-                    tempList.append(tempString.lstrip().rstrip())
-                    tempString = ""
-                    string = ""
-        if (string == "." or string == "\n" or string == "…") and tempString == "":
-            continue
-        elif string == "\n" and tempString != "":
-            tempList.append(tempString.lstrip().rstrip())
-            tempString = ""
-        
-        elif string == "." and isEnding:
-            tempString += string
-            tempList.append(tempString.lstrip().rstrip())
-            tempString = ""
-        else:
-            tempString += string
-    return tempList
+def filter_text(text: str) -> set:
+    list_text = re.findall(r'([A-Z][^.!?]*[.!?])' , text)
+    set_text = {t for t in list_text if len(t) > 20}
+    return set_text
 
-def send_text_to_database(all_files: list, cursor: Cursor):
+def send_text_to_database(all_files: list, cursor: Cursor, connection):
     for chapter in all_files:
         sql = "SELECT id FROM novel WHERE novel=%s;"
         cursor.execute(sql, chapter.replace(".txt", "").split("/")[-2])
@@ -115,4 +86,5 @@ def send_text_to_database(all_files: list, cursor: Cursor):
         except Exception:
             print(sql)
         chapter_file.close()
+        connection.commit()
         
